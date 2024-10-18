@@ -5,10 +5,10 @@ use std::path::PathBuf;
 
 fn main() {
     // Tell cargo to invalidate the built crate whenever the wrapper changes
-    println!("cargo:rerun-if-changed=a_x_b_mod_m/include/oismailov/a_x_b_mod_m.h");
+    println!("cargo:rerun-if-changed=install/include/oismailov/a_x_b_mod_m.h");
     let bindings = bindgen::Builder::default()
         // The input header we would like to generate bindings for.
-        .header("a_x_b_mod_m/include/oismailov/a_x_b_mod_m.h")
+        .header("install/include/oismailov/a_x_b_mod_m.h")
         // Tell cargo to invalidate the built crate whenever any of the
         // included header files changed.
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
@@ -22,8 +22,6 @@ fn main() {
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings!");
 
-    // Build static library
-    let dst = Config::new("a_x_b_mod_m").build();
-    println!("cargo:rustc-link-search=native={}", dst.display());
-    println!("cargo:rustc-link-lib=static=oismailov");
+    println!("cargo:rustc-link-search=native=./install/lib");
+    println!("cargo:rustc-link-lib=dylib=oismailov_math");
 }
